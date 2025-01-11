@@ -5,7 +5,7 @@ use extism_pdk::*;
 use serde::{Deserialize, Serialize};
 
 #[plugin_fn]
-pub unsafe fn register(Json(state): Json<MossState>) -> FnResult<ExtensionInfo> {
+pub unsafe fn moss_register(Json(state): Json<MossState>) -> FnResult<ExtensionInfo> {
     Ok(ExtensionInfo { files: [].to_vec() })
 }
 
