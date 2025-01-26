@@ -52,14 +52,17 @@ pub struct ContextButton {
     pub context_menu: Option<String>,
 }
 
-#[derive(ToBytes, Serialize, PartialEq, Debug)]
+#[derive(ToBytes, Serialize, PartialEq, Debug, Clone)]
 #[encoding(Json)]
 pub struct ContextMenu {
     pub key: String,
     pub buttons: Vec<ContextButton>,
+    pub pre_loop: Option<String>,
+    pub post_loop: Option<String>,
+    pub invert: bool,
 }
 
-#[derive(ToBytes, Deserialize, PartialEq, Debug)]
+#[derive(ToBytes, Deserialize, PartialEq, Debug, Clone)]
 #[encoding(Json)]
 pub struct MossState {
     pub width: i32,
