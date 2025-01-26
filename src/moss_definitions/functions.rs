@@ -10,7 +10,14 @@ extern "ExtismHost" {
 
     // Defaults
     pub fn moss_defaults_set_color(key: String, color: Color);
+    pub fn moss_defaults_get_color(key: String) -> Color;
     pub fn moss_defaults_set_text_color(key: String, colors: TextColors);
+    pub fn moss_defaults_get_text_color(key: String) -> TextColors;
+
+    pub fn moss_defaults_get<T: for<'de> Deserialize<'de>>(key: &str) -> ConfigGet<T>;
+    #[link_name = "moss_defaults_set"]
+    fn _moss_defaults_set<T: Serialize>(value: ConfigSet<T>);
+
 
     // Extension manager
     pub fn moss_em_config_get<T: for<'de> Deserialize<'de>>(key: &str) -> ConfigGet<T>;
@@ -20,6 +27,13 @@ extern "ExtismHost" {
 
 pub unsafe fn moss_em_config_set<T: Serialize>(key: &str, value: T) {
     let _ = _moss_em_config_set::<T>(ConfigSet::<T> {
+        key: key.into(),
+        value,
+    });
+}
+
+pub unsafe fn moss_defaults_set<T: Serialize>(key: &str, value: T) {
+    let _ = _moss_defaults_set::<T>(ConfigSet::<T> {
         key: key.into(),
         value,
     });
