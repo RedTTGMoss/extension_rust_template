@@ -1,5 +1,6 @@
 use crate::moss_definitions::types::*;
 use extism_pdk::*;
+use extism_pdk::json::to_vec;
 use serde::{Deserialize, Serialize};
 
 #[host_fn]
@@ -22,6 +23,13 @@ extern "ExtismHost" {
     pub fn moss_em_config_get<T: for<'de> Deserialize<'de>>(key: &str) -> ConfigGet<T>;
     #[link_name = "moss_em_config_set"]
     fn _moss_em_config_set<T: Serialize>(value: ConfigSet<T>);
+
+    // PygameExtra
+    #[link_name = "moss_pe_draw_rect"]
+    fn _moss_pe_draw_rect(draw: PygameExtraRect);
+    pub fn moss_pe_register_screen(screen: MossScreen);
+    #[link_name = "moss_pe_open_screen"]
+    fn _moss_pe_open_screen(key: String, initial_values: Vec<u8>);
 }
 
 pub unsafe fn moss_em_config_set<T: Serialize>(key: &str, value: T) {
@@ -31,10 +39,24 @@ pub unsafe fn moss_em_config_set<T: Serialize>(key: &str, value: T) {
     });
 }
 
+pub unsafe fn moss_pe_open_screen<T: Serialize>(key: &str, initial_values: T) -> Result<(), extism_pdk::Error> {
+    let serialized_values = to_vec(&initial_values)?;
+    _moss_pe_open_screen(key.into(), serialized_values)
+}
+
 pub unsafe fn moss_defaults_set<T: Serialize>(key: &str, value: T) {
     let _ = _moss_defaults_set::<T>(ConfigSet::<T> {
         key: key.into(),
         value,
+    });
+}
+
+pub unsafe fn moss_pe_draw_rect(color: Color, rect: Rect, width: i64, edge_rounding: Option<PygameExtraRectEdgeRounding>) {
+    let _ = _moss_pe_draw_rect(PygameExtraRect {
+        color,
+        rect,
+        width,
+        edge_rounding,
     });
 }
 
