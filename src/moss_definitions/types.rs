@@ -149,7 +149,7 @@ pub struct PygameExtraRect {
 }
 
 
-#[derive(ToBytes, Deserialize, PartialEq, Debug, Clone)]
+#[derive(FromBytes, Deserialize, PartialEq, Debug, Clone)]
 #[encoding(Json)]
 pub struct MossState {
     pub width: i32,
