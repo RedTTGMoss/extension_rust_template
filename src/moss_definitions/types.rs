@@ -139,7 +139,7 @@ impl Rect {
     }
 }
 
-#[derive(ToBytes, Serialize, PartialEq, Debug)]
+#[derive(FromBytes, Deserialize, ToBytes, Serialize, PartialEq, Debug)]
 #[encoding(Json)]
 pub struct PygameExtraRect {
     pub color: Color,
