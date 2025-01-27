@@ -42,7 +42,7 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
             transformed_methods.push(quote! {
                 #[extism_pdk::plugin_fn]
-                pub unsafe fn #new_func_name(#(#inputs_transformed),*) -> FnResult<()> #new_block
+                pub unsafe fn #new_func_name(#(#inputs_transformed),*) -> Result::FnResult<()> #new_block
             });
 
             match func_name.to_string().as_str() {
