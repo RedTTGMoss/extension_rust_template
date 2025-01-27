@@ -62,7 +62,7 @@ pub struct ContextMenu {
     pub invert: bool,
 }
 
-#[derive(ToBytes, Serialize, PartialEq, Debug, Clone)]
+#[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone)]
 #[encoding(Json)]
 pub struct PygameExtraRectEdgeRounding {
     pub edge_rounding: Option<i64>,
