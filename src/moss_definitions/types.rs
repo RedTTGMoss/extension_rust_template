@@ -192,4 +192,13 @@ impl MossScreen {
             event_hook: None
         }
     }
+    pub fn basic_with_event_hook(key: String, screen_loop: String, event_hook: String) -> Self {
+        Self {
+            key,
+            screen_pre_loop: None,
+            screen_loop,
+            screen_post_loop: None,
+            event_hook: Some(event_hook)
+        }
+    }
 }
