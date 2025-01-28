@@ -98,9 +98,9 @@ pub fn moss_color(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as LitInt);
     let hex = input.base10_parse::<u32>().unwrap();
 
-    let mut r;
-    let mut g;
-    let mut b;
+    let r;
+    let g;
+    let b;
     let a;
 
     if hex <= 0xFFFFFF {
