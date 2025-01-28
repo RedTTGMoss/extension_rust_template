@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
-use syn::{parse_macro_input, ItemImpl, FnArg};
+use syn::{parse_macro_input, ItemImpl, FnArg, LitInt};
 
 #[proc_macro_attribute]
 pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -36,7 +36,7 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
             let new_block = quote! {
                 {
                     #block
-                    Ok(())
+                    extism_pdk::Ok(())
                 }
             };
 
@@ -69,7 +69,7 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 screen_loop: #loop_function.to_string(),
                 screen_post_loop: #post_loop_function,
                 event_hook: #event_hook_function,
-            }).unwrap();
+            })
         }
         pub unsafe fn open() {
             moss_definitions::functions::moss_pe_open_screen(#struct_name_str, ()).unwrap()
@@ -87,6 +87,42 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
             #(#transformed_methods)*
             #open_methods
         }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn moss_color(input: TokenStream) -> TokenStream {
+    // Parse the input as a hexadecimal literal
+    let input = parse_macro_input!(input as LitInt);
+    let hex = input.base10_parse::<u32>().unwrap();
+
+    let mut r;
+    let mut g;
+    let mut b;
+    let a;
+
+    if hex <= 0xFFFFFF {
+        r = ((hex >> 16) & 0xFF) as i64;
+        g = ((hex >> 8) & 0xFF) as i64;
+        b = (hex & 0xFF) as i64;
+        a = None;
+    } else {
+        r = ((hex >> 24) & 0xFF) as i64;
+        g = ((hex >> 16) & 0xFF) as i64;
+        b = ((hex >> 8) & 0xFF) as i64;
+        a = Some((hex & 0xFF) as i64);
+    }
+
+
+    let expanded = match a {
+        Some(a) => quote! {
+            Color::new(#r, #g, #b, Some(#a))
+        },
+        None => quote! {
+            Color::new(#r, #g, #b, None)
+        },
     };
 
     TokenStream::from(expanded)
