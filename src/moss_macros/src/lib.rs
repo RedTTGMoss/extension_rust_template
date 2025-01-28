@@ -69,7 +69,7 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 screen_loop: #loop_function.to_string(),
                 screen_post_loop: #post_loop_function,
                 event_hook: #event_hook_function,
-            })
+            });
         }
         pub unsafe fn open() {
             moss_definitions::functions::moss_pe_open_screen(#struct_name_str, ()).unwrap()
