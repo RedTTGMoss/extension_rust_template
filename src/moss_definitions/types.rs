@@ -229,6 +229,7 @@ impl MossScreen {
 }
 
 #[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone)]
+#[encoding(Json)]
 pub struct TextRef {
     text_id: i64,
     pub text: String,
