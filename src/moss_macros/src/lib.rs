@@ -36,7 +36,7 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
             let new_block = quote! {
                 {
                     #block
-                    extism_pdk::Ok(())
+                    Ok(())
                 }
             };
 
