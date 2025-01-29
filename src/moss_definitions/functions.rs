@@ -24,6 +24,7 @@ extern "ExtismHost" {
     #[link_name = "moss_em_config_set"]
     fn _moss_em_config_set<T: Serialize>(value: ConfigSet<T>);
     pub fn moss_em_get_state() -> MossState;
+    pub fn moss_em_register_extension_button(button: ContextButton);
 
     // PygameExtra
     #[link_name = "moss_pe_draw_rect"]
