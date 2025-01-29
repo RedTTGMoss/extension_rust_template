@@ -143,7 +143,7 @@ pub unsafe fn moss_text_set_rect(text_id: i64, rect: &Rect) -> Result<(), Error>
 pub unsafe fn moss_text_set_text(text_id: i64, text: &str) -> Result<Rect, Error> {
     let res = extism_pdk::Memory::from(moss_text_set_text_impl(
         text_id,
-        extism_pdk::ToMemory::to_memory(&&text)?.offset()
+        extism_pdk::ToMemory::to_memory(&&text)?.offset(),
     ));
 
     <Rect as extism_pdk::FromBytes>::from_bytes(&res.to_vec())
@@ -152,7 +152,7 @@ pub unsafe fn moss_text_set_font(text_id: i64, font: &str, font_size: i64) -> Re
     let res = extism_pdk::Memory::from(moss_text_set_font_impl(
         text_id,
         extism_pdk::ToMemory::to_memory(&&font)?.offset(),
-        font_size
+        font_size,
     ));
 
     <Rect as extism_pdk::FromBytes>::from_bytes(&res.to_vec())
