@@ -68,20 +68,25 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let open_methods = quote! {
         pub unsafe fn register() {
-            crate::moss_definitions::functions::moss_pe_register_screen(moss_definitions::types::MossScreen {
+            if let Err(e) = crate::moss_definitions::functions::moss_pe_register_screen(moss_definitions::types::MossScreen {
                 key: #struct_name_str.to_string(),
                 screen_pre_loop: #pre_loop_function,
                 screen_loop: #loop_function.to_string(),
                 screen_post_loop: #post_loop_function,
                 event_hook: #event_hook_function,
-            });
+            }) {
+                panic!("Failed to register screen: {:?}", e);
+            }
         }
         pub unsafe fn open() {
             crate::moss_definitions::functions::moss_pe_open_screen(#struct_name_str, ()).unwrap()
         }
 
         pub unsafe fn open_with_data(initial_data: Self) {
-            crate::moss_definitions::functions::moss_pe_open_screen::<Self>(#struct_name_str, initial_data).unwrap()
+            match crate::moss_definitions::functions::moss_pe_open_screen::<Self>(#struct_name_str, initial_data) {
+                Ok(_) => {},
+                Err(e) => panic!("Failed to open screen with data: {:?}", e),
+            }
         }
     };
 
