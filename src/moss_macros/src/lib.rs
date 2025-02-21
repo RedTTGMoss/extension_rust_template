@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
-use syn::{parse_macro_input, ItemImpl, FnArg, LitInt, DeriveInput};
+use syn::{parse_macro_input, DeriveInput, FnArg, ItemImpl, LitInt};
 
 #[proc_macro_attribute]
 pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -56,10 +56,15 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
     }
 
     let loop_function = loop_function.expect("loop function is required.");
-    let pre_loop_function = pre_loop_function.map(|f| quote!(Some(#f.to_string()))).unwrap_or(quote!(None));
-    let post_loop_function = post_loop_function.map(|f| quote!(Some(#f.to_string()))).unwrap_or(quote!(None));
-    let event_hook_function = event_hook_function.map(|f| quote!(Some(#f.to_string()))).unwrap_or(quote!(None));
-
+    let pre_loop_function = pre_loop_function
+        .map(|f| quote!(Some(#f.to_string())))
+        .unwrap_or(quote!(None));
+    let post_loop_function = post_loop_function
+        .map(|f| quote!(Some(#f.to_string())))
+        .unwrap_or(quote!(None));
+    let event_hook_function = event_hook_function
+        .map(|f| quote!(Some(#f.to_string())))
+        .unwrap_or(quote!(None));
 
     let open_methods = quote! {
         pub unsafe fn register() {
@@ -115,7 +120,6 @@ pub fn moss_color(input: TokenStream) -> TokenStream {
         a = Some((hex & 0xFF) as i64);
     }
 
-
     let expanded = match a {
         Some(a) => quote! {
             Color::new(#r, #g, #b, Some(#a))
@@ -160,12 +164,16 @@ pub fn metadata_accessors_derive(input: TokenStream) -> TokenStream {
                     }
                 };
 
-                let setter = if field_ty == &syn::parse_str("String").unwrap() || field_ty == &syn::parse_str("Option<String>").unwrap() {
+                let setter = if field_ty == &syn::parse_str("String").unwrap()
+                    || field_ty == &syn::parse_str("Option<String>").unwrap()
+                {
                     quote! {
                         pub unsafe fn #setter_ident(&mut self, value: #field_ty) {
                             self.#field_ident = value.clone();
                             if let Some(ref document_uuid) = self.document_uuid {
                                 crate::moss_definitions::functions::moss_api_document_metadata_set::<#field_ty>(document_uuid, #field_name, value);
+                            } else if let Some(ref collection_uuid) = self.collection_uuid {
+                                crate::moss_definitions::functions::moss_api_collection_metadata_set::<#field_ty>(collection_uuid, #field_name, value);
                             } else if let Some(ref metadata_id) = self.metadata_id {
                                 crate::moss_definitions::functions::moss_api_metadata_set::<#field_ty>(metadata_id, #field_name, value);
                             } else {
