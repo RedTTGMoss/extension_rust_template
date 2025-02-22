@@ -38,7 +38,7 @@ extern "ExtismHost" {
     pub fn moss_pe_register_screen(screen: MossScreen);
     #[link_name = "moss_pe_open_screen"]
     fn _moss_pe_open_screen(key: String, initial_values: Vec<u8>);
-    fn moss_pe_close_screen();
+    pub fn moss_pe_close_screen();
 
     pub fn moss_pe_get_screen_value<T: for<'de> Deserialize<'de>>(key: &str) -> ConfigGet<T>;
     #[link_name = "moss_pe_set_screen_value"]
