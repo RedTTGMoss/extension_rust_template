@@ -53,6 +53,15 @@ pub fn moss_screen(_attr: TokenStream, item: TokenStream) -> TokenStream {
                     "event_hook" => event_hook_function = Some(new_func_name.to_string()),
                     _ => {}
                 }
+            } else {
+                let func_name = &func.sig.ident;
+                let inputs: Vec<_> = func.sig.inputs.iter().cloned().collect();
+                let output = &func.sig.output;
+                let block = &func.block;
+
+                transformed_methods.push(quote! {
+                    unsafe fn #func_name(#(#inputs), *) #output #block
+                });
             }
         }
     }
