@@ -116,13 +116,15 @@ pub unsafe fn moss_em_config_set<T: Serialize>(key: &str, value: T) {
     _moss_em_config_set::<T>(ConfigSet::<T> {
         key: key.into(),
         value,
-    }).unwrap();
+    })
+    .unwrap();
 }
 pub unsafe fn moss_pe_set_screen_value<T: Serialize>(key: &str, value: T) {
     _moss_pe_set_screen_value::<T>(ConfigSet::<T> {
         key: key.into(),
         value,
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 pub unsafe fn moss_pe_open_screen<T: Serialize>(
@@ -137,7 +139,8 @@ pub unsafe fn moss_defaults_set<T: Serialize>(key: &str, value: T) {
     _moss_defaults_set::<T>(ConfigSet::<T> {
         key: key.into(),
         value,
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 pub unsafe fn moss_pe_draw_rect(
@@ -151,7 +154,8 @@ pub unsafe fn moss_pe_draw_rect(
         rect: rect.to_owned(),
         width,
         edge_rounding,
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 pub unsafe fn moss_api_document_metadata_set<T: Serialize>(
@@ -165,7 +169,8 @@ pub unsafe fn moss_api_document_metadata_set<T: Serialize>(
             key: key.into(),
             value,
         },
-    ).unwrap();
+    )
+    .unwrap();
 }
 pub unsafe fn moss_api_document_content_set<T: Serialize>(
     document_uuid: &str,
@@ -178,7 +183,8 @@ pub unsafe fn moss_api_document_content_set<T: Serialize>(
             key: key.into(),
             value,
         },
-    ).unwrap();
+    )
+    .unwrap();
 }
 
 pub unsafe fn moss_api_collection_metadata_set<T: Serialize>(
@@ -192,7 +198,8 @@ pub unsafe fn moss_api_collection_metadata_set<T: Serialize>(
             key: key.into(),
             value,
         },
-    ).unwrap();
+    )
+    .unwrap();
 }
 
 pub unsafe fn moss_api_document_set<T: Serialize>(document_uuid: &str, key: &str, value: T) {
@@ -202,7 +209,8 @@ pub unsafe fn moss_api_document_set<T: Serialize>(document_uuid: &str, key: &str
             key: key.into(),
             value,
         },
-    ).unwrap();
+    )
+    .unwrap();
 }
 pub unsafe fn moss_api_collection_set<T: Serialize>(collection_uuid: &str, key: &str, value: T) {
     _moss_api_collection_set(
@@ -211,7 +219,8 @@ pub unsafe fn moss_api_collection_set<T: Serialize>(collection_uuid: &str, key: 
             key: key.into(),
             value,
         },
-    ).unwrap();
+    )
+    .unwrap();
 }
 
 pub unsafe fn moss_api_metadata_set<T: Serialize>(metadata_id: &i64, key: &str, value: T) {
@@ -221,7 +230,8 @@ pub unsafe fn moss_api_metadata_set<T: Serialize>(metadata_id: &i64, key: &str, 
             key: key.into(),
             value,
         },
-    ).unwrap();
+    )
+    .unwrap();
 }
 pub unsafe fn moss_api_content_set<T: Serialize>(content_id: &i64, key: &str, value: T) {
     _moss_api_content_set(
@@ -230,7 +240,8 @@ pub unsafe fn moss_api_content_set<T: Serialize>(content_id: &i64, key: &str, va
             key: key.into(),
             value,
         },
-    ).unwrap();
+    )
+    .unwrap();
 }
 
 #[link(wasm_import_module = "extism:host/user")]
