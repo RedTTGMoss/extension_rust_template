@@ -199,7 +199,7 @@ pub fn moss_color(input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
-#[proc_macro_derive(Accessors, attributes(accessor_type, accessor_uuid, accessor))]
+#[proc_macro_derive(Accessors, attributes(accessor))]
 pub fn accessors_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let struct_name = &input.ident;

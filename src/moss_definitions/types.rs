@@ -584,7 +584,6 @@ pub struct RM_Zoom {
 }
 
 #[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone, Accessors)]
-#[accessor_type("content")]
 #[encoding(Json)]
 pub struct RM_Content {
     pub hash: String,
@@ -683,7 +682,6 @@ impl RM_Content {
 }
 
 #[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone, Accessors)]
-#[accessor_type("metadata")]
 #[encoding(Json)]
 pub struct RM_Metadata {
     pub hash: String,
@@ -769,8 +767,6 @@ impl RM_Metadata {
 }
 
 #[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone, Accessors)]
-#[accessor_type("collection")]
-#[accessor_uuid(true)]
 #[encoding(Json)]
 pub struct RM_DocumentCollection {
     pub tags: Vec<RM_Tag>,
@@ -794,8 +790,6 @@ impl RM_DocumentCollection {
 }
 
 #[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone, Accessors)]
-#[accessor_type("document")]
-#[accessor_uuid(true)]
 #[encoding(Json)]
 pub struct RM_Document {
     #[accessor(exclude)]
