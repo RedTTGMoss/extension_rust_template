@@ -10,14 +10,16 @@ use crate::{
     moss_api_document_ensure_download_and_callback, moss_api_document_export,
     moss_api_document_load_files_from_cache, moss_api_document_new_epub,
     moss_api_document_new_notebook, moss_api_document_new_pdf, moss_api_document_randomize_uuids,
-    moss_api_document_unload_files, moss_api_get_all, moss_api_metadata_new, moss_text_display,
-    moss_text_get_rect, moss_text_make, moss_text_set_font, moss_text_set_rect, moss_text_set_text,
+    moss_api_document_unload_files, moss_api_get_all, moss_api_get_root, moss_api_metadata_new,
+    moss_api_new_document_sync_progress, moss_api_new_file_sync_progress, moss_api_spread_event,
+    moss_text_display, moss_text_get_rect, moss_text_make, moss_text_set_font, moss_text_set_rect,
+    moss_text_set_text,
 };
 use base64::engine::general_purpose;
 use base64::Engine;
 use chrono::{DateTime, SecondsFormat, TimeZone, Utc};
 use derive_builder::Builder;
-use extism_pdk::{error, info, Error, FromBytes, Json, ToBytes};
+use extism_pdk::{error, Error, FromBytes, Json, ToBytes};
 use moss_macros::{moss_color, Accessors, DocumentAccessorBuilder};
 use serde::{Deserialize, Serialize};
 use std::io::{BufReader, Read};
@@ -836,13 +838,7 @@ impl RM_Document {
         let notebook = builder.build()?;
 
         match moss_api_document_new_notebook(&notebook) {
-            Ok(document_uuid) => {
-                info!(
-                    "The accessor is: {}",
-                    notebook.accessor.new_uuid(document_uuid.clone())
-                );
-                Ok(notebook.accessor.new_uuid(document_uuid))
-            }
+            Ok(document_uuid) => Ok(notebook.accessor.new_uuid(document_uuid)),
             Err(e) => {
                 error!("Error creating new notebook: {:?}", e);
                 Err(e)
@@ -944,9 +940,125 @@ impl RM_Document {
     }
 }
 
+#[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone, Accessors)]
+#[encoding(Json)]
+pub struct API_FileSyncProgress {
+    done: i64,
+    total: i64,
+    stage: i64,
+    finished: bool,
+
+    pub(crate) accessor: Accessor,
+}
+
+impl API_FileSyncProgress {
+    pub unsafe fn _get_with_accessor(accessor: &Accessor) -> Result<Self, Error> {
+        match moss_api_get_all::<Self>(accessor) {
+            Ok(get) => Ok(get.value),
+            Err(e) => {
+                error!("Error retrieving file sync progress: {:?}", e);
+                Err(e)
+            }
+        }
+    }
+    pub unsafe fn new() -> Result<Accessor, Error> {
+        match moss_api_new_file_sync_progress() {
+            Ok(progress_id) => Ok(Accessor::file_sync_progress(progress_id)),
+            Err(e) => {
+                error!("Error creating new file sync progress: {:?}", e);
+                Err(e)
+            }
+        }
+    }
+
+    pub unsafe fn get_new() -> Result<Self, Error> {
+        match Self::new() {
+            Ok(progress_accessor) => Self::_get_with_accessor(&progress_accessor),
+            Err(e) => Err(e),
+        }
+    }
+}
+#[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone, Accessors)]
+#[encoding(Json)]
+pub struct API_DocumentSyncProgress {
+    done: i64,
+    total: i64,
+    stage: Option<String>,
+    finished: bool,
+
+    document_uuid: String,
+    file_sync_operation: Accessor,
+    total_tasks: i64,
+    finished_tasks: i64,
+    _tasks_was_set_once: bool,
+
+    accessor: Accessor,
+}
+
+impl API_DocumentSyncProgress {
+    pub unsafe fn _get_with_accessor(accessor: &Accessor) -> Result<Self, Error> {
+        match moss_api_get_all::<Self>(accessor) {
+            Ok(get) => Ok(get.value),
+            Err(e) => {
+                error!("Error retrieving document sync progress: {:?}", e);
+                Err(e)
+            }
+        }
+    }
+    pub unsafe fn new(
+        file_sync_progress_accessor: &Accessor,
+        document_uuid: &str,
+    ) -> Result<Accessor, Error> {
+        match moss_api_new_document_sync_progress(file_sync_progress_accessor, document_uuid) {
+            Ok(progress_id) => Ok(Accessor::document_sync_progress(progress_id)),
+            Err(e) => {
+                error!("Error creating new document sync progress: {:?}", e);
+                Err(e)
+            }
+        }
+    }
+
+    pub unsafe fn get_new(
+        file_sync_progress_accessor: &Accessor,
+        document_uuid: &str,
+    ) -> Result<Self, Error> {
+        match Self::new(file_sync_progress_accessor, document_uuid) {
+            Ok(progress_accessor) => Self::_get_with_accessor(&progress_accessor),
+            Err(e) => Err(e),
+        }
+    }
+}
+
 #[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone)]
 #[encoding(Json)]
 pub struct RM_RootInfo {
-    pub generation: i64,
+    pub generation: Option<i64>,
     pub hash: String,
+}
+
+impl RM_RootInfo {
+    pub unsafe fn get() -> Result<Self, Error> {
+        match moss_api_get_root() {
+            Ok(root) => Ok(root),
+            Err(e) => {
+                error!("Error retrieving root info: {:?}", e);
+                Err(e)
+            }
+        }
+    }
+}
+
+pub struct API_Event {}
+
+impl API_Event {
+    pub unsafe fn spread_event(accessor: &Accessor) {
+        let _ = moss_api_spread_event(accessor);
+    }
+
+    pub unsafe fn moss_fatal() {
+        Self::spread_event(&Accessor::moss_fatal_event());
+    }
+    pub unsafe fn api_fatal() {
+        Self::spread_event(&Accessor::api_fatal_event());
+    }
 }

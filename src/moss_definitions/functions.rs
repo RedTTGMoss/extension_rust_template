@@ -74,6 +74,17 @@ extern "ExtismHost" {
     pub fn moss_api_content_new_notebook(page_count: i64) -> i64;
     pub fn moss_api_content_new_pdf() -> i64;
     pub fn moss_api_content_new_epub() -> i64;
+
+    // API progress functions
+    pub fn moss_api_new_file_sync_progress() -> i64;
+    pub fn moss_api_new_document_sync_progress(
+        file_sync_progress: &Accessor,
+        document_uuid: &str,
+    ) -> i64;
+
+    // Advance API functions
+    pub fn moss_api_get_root() -> RM_RootInfo;
+    pub fn moss_api_spread_event(accessor: &Accessor);
 }
 
 pub unsafe fn moss_em_config_set<T: Serialize>(key: &str, value: T) {

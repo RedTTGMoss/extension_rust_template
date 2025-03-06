@@ -30,6 +30,14 @@ pub static ACCESSOR_STANDALONE_COLLECTION: &str = "collection";
 static ACCESSOR_STANDALONE_METADATA: &str = "metadata";
 static ACCESSOR_STANDALONE_CONTENT: &str = "content";
 
+// Sync operations
+static ACCESSOR_FILE_SYNC_PROGRESS: &str = "file_sync_progress";
+static ACCESSOR_DOCUMENT_SYNC_PROGRESS: &str = "file_sync_progress";
+
+// Events - These do not contain physical objects
+static ACCESSOR_E_MOSS_FATAL: &str = "moss_fatal";
+static ACCESSOR_E_API_FATAL: &str = "api_fatal";
+
 pub enum AccessorType {
     ApiItem,
     StandaloneItem,
@@ -316,6 +324,41 @@ impl Accessor {
             r#type: self.r#type.clone(),
             uuid: Some(uuid),
             id: self.id,
+        }
+    }
+
+    // Sync operations
+
+    pub fn file_sync_progress(id: i64) -> Self {
+        Self {
+            r#type: ACCESSOR_FILE_SYNC_PROGRESS.to_string(),
+            uuid: None,
+            id: Some(id),
+        }
+    }
+
+    pub fn document_sync_progress(id: i64) -> Self {
+        Self {
+            r#type: ACCESSOR_DOCUMENT_SYNC_PROGRESS.to_string(),
+            uuid: None,
+            id: Some(id),
+        }
+    }
+
+    // Events
+    pub fn moss_fatal_event() -> Self {
+        Self {
+            r#type: ACCESSOR_E_MOSS_FATAL.to_string(),
+            uuid: None,
+            id: None,
+        }
+    }
+
+    pub fn api_fatal_event() -> Self {
+        Self {
+            r#type: ACCESSOR_E_API_FATAL.to_string(),
+            uuid: None,
+            id: None,
         }
     }
 }
