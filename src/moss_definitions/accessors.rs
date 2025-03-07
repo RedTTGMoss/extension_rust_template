@@ -34,6 +34,8 @@ static ACCESSOR_STANDALONE_CONTENT: &str = "content";
 static ACCESSOR_FILE_SYNC_PROGRESS: &str = "file_sync_progress";
 static ACCESSOR_DOCUMENT_SYNC_PROGRESS: &str = "file_sync_progress";
 
+static ACCESSOR_SYNC_STAGE: &str = "sync_stage";
+
 // Events - These do not contain physical objects
 static ACCESSOR_E_MOSS_FATAL: &str = "moss_fatal";
 static ACCESSOR_E_API_FATAL: &str = "api_fatal";
@@ -359,6 +361,14 @@ impl Accessor {
             r#type: ACCESSOR_E_API_FATAL.to_string(),
             uuid: None,
             id: None,
+        }
+    }
+
+    pub fn api_sync_stage(index: i64) -> Self {
+        Self {
+            r#type: ACCESSOR_SYNC_STAGE.to_string(),
+            uuid: None,
+            id: Some(index),
         }
     }
 }

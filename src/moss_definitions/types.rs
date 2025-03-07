@@ -1,4 +1,5 @@
 #![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
 
 use crate::moss_definitions::accessors::{
     Accessor, AccessorSubType, AccessorType, ACCESSOR_API_DOCUMENT, ACCESSOR_STANDALONE_DOCUMENT,
@@ -11,9 +12,9 @@ use crate::{
     moss_api_document_load_files_from_cache, moss_api_document_new_epub,
     moss_api_document_new_notebook, moss_api_document_new_pdf, moss_api_document_randomize_uuids,
     moss_api_document_unload_files, moss_api_get_all, moss_api_get_root, moss_api_metadata_new,
-    moss_api_new_document_sync_progress, moss_api_new_file_sync_progress, moss_api_spread_event,
-    moss_text_display, moss_text_get_rect, moss_text_make, moss_text_set_font, moss_text_set_rect,
-    moss_text_set_text,
+    moss_api_new_document_sync_progress, moss_api_new_file_sync_progress, moss_api_set,
+    moss_api_spread_event, moss_text_display, moss_text_get_rect, moss_text_make,
+    moss_text_set_font, moss_text_set_rect, moss_text_set_text,
 };
 use base64::engine::general_purpose;
 use base64::Engine;
@@ -1060,5 +1061,42 @@ impl API_Event {
     }
     pub unsafe fn api_fatal() {
         Self::spread_event(&Accessor::api_fatal_event());
+    }
+}
+
+#[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug, Clone, Accessors)]
+#[encoding(Json)]
+pub struct API_SyncStage {
+    pub text: String,
+    pub icon: String,
+
+    pub accessor: Accessor,
+}
+
+impl API_SyncStage {
+    pub unsafe fn get(index: i64) -> Result<Self, Error> {
+        match moss_api_get_all::<Self>(&Accessor::api_sync_stage(index)) {
+            Ok(sync_state) => Ok(sync_state.value),
+            Err(e) => {
+                error!("Error retrieving sync state: {:?}", e);
+                Err(e)
+            }
+        }
+    }
+    pub unsafe fn make_custom(index: i64, text: &str, icon: &str) -> Result<Accessor, Error> {
+        let accessor = Accessor::api_sync_stage(99 + index);
+        match moss_api_set(&accessor, "text", text) {
+            Ok(()) => match moss_api_set(&accessor, "icon", icon) {
+                Ok(()) => Ok(accessor),
+                Err(e) => {
+                    error!("Error setting icon for new custom sync state: {:?}", e);
+                    Err(e)
+                }
+            },
+            Err(e) => {
+                error!("Error setting text for new custom sync state: {:?}", e);
+                Err(e)
+            }
+        }
     }
 }

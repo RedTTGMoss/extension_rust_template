@@ -232,7 +232,13 @@ pub fn accessors_derive(input: TokenStream) -> TokenStream {
                 }
 
                 let setters_block = quote! {
-                    crate::moss_definitions::functions::moss_api_set::<#field_ty>(&self.accessor, #field_name, value);
+                    match crate::moss_definitions::functions::moss_api_set::<#field_ty>(&self.accessor, #field_name, value) {
+                        Ok(()) => {}
+                        Err(e) => {
+                            extism_pdk::error!("Failed to set {}: {:?}", #field_name, e);
+                            panic!("Failed to set {}: {:?}", #field_name, e);
+                        }
+                    }
                 };
 
                 let getters_block = quote! {

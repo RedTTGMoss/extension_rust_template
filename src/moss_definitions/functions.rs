@@ -133,7 +133,11 @@ pub unsafe fn moss_pe_draw_rect(
     .unwrap();
 }
 
-pub unsafe fn moss_api_set<T: Serialize>(accessor: &Accessor, key: &str, value: T) {
+pub unsafe fn moss_api_set<T: Serialize>(
+    accessor: &Accessor,
+    key: &str,
+    value: T,
+) -> Result<(), Error> {
     _moss_api_set(
         accessor,
         ConfigSet::<T> {
@@ -141,7 +145,6 @@ pub unsafe fn moss_api_set<T: Serialize>(accessor: &Accessor, key: &str, value: 
             value,
         },
     )
-    .unwrap();
 }
 
 #[link(wasm_import_module = "extism:host/user")]
